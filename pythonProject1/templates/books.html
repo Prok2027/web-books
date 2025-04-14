@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Список книг</h2>
+<form method="get" action="{{ url_for('show_books') }}" class="mb-4">
+  <div class="row g-2">
+    <div class="col-md-4">
+      <input type="text" name="title" class="form-control" placeholder="Поиск по названию"
+             value="{{ search_query }}">
+    </div>
+    <div class="col-md-3">
+      <select name="author" class="form-select">
+        <option value="">Все авторы</option>
+        {% for a in authors %}
+          <option value="{{ a['author'] }}" {% if selected_author == a['author'] %}selected{% endif %}>
+            {{ a['author'] }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <select name="rating" class="form-select">
+        <option value="">Любой рейтинг</option>
+        {% for i in range(5, 0, -1) %}
+          <option value="{{ i }}" {% if selected_rating == i %}selected{% endif %}>{{ i }}+ звёзд</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-3">
+      <select name="genre" class="form-select">
+        <option value="">Все жанры</option>
+        {% for genre in genres %}
+          <option value="{{ genre['genre_name'] }}" {% if selected_genre == genre['genre_name'] %}selected{% endif %}>
+            {{ genre['genre_name'] }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-2">
+      <button type="submit" class="btn btn-primary w-100">Найти</button>
+    </div>
+  </div>
+</form>
+<table class="table table-hover">
+  <thead>
+    <tr>
+      <th>Обложка</th>
+      <th>Название</th>
+      <th>Автор</th>
+      <th>Ваша оценка</th>
+      <th>Ваш отзыв</th>
+      <th>Средняя оценка</th>
+      <th>Медианная оценка</th>
+      <th>Избранное</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for book in books %}
+      <tr>
+        <td>
+          {% if book['cover'] %}
+              <img src="{{ url_for('uploaded_file', filename=book['cover']) }}" alt="Обложка" style="height: 100px;">
+          {% else %}
+              -
+          {% endif %}
+        </td>
+        <td>{{ book['title'] }}</td>
+        <td>{{ book['author'] }}</td>
+        <td>
+          <form method="post" action="{{ url_for('rate_book') }}">
+            <input type="hidden" name="book_id" value="{{ book['id'] }}">
+            <select name="points" class="form-select form-select-sm d-inline-block w-auto">
+              {% for i in range(1, 6) %}
+                <option value="{{ i }}" {% if book_grade.get(book['id']) == i %}selected{% endif %}>{{ i }}</option>
+              {% endfor %}
+            </select>
+        </td>
+        <td>
+            <input type="text" name="review" class="form-control form-control-sm" placeholder="Ваш отзыв" value="{{ book_reviews.get(book['id'], '') }}">
+            <button type="submit" class="btn btn-primary btn-sm mt-1">Сохранить</button>
+          </form>
+        </td>
+
+        <td>
+          {% if book['avg_rating'] %}
+            {{ book['avg_rating'] | round(1) }} {{ book['avg_rating'] | stars | safe }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>
+          {% if book_median[book['id']] is defined %}
+            {{ book_median[book['id']] | round(1) }}
+          {% else %}
+            -
+          {% endif %}
+        </td>
+        <td>
+          <form method="post" action="{{ url_for('favorite_book') }}">
+            <input type="hidden" name="book_id" value="{{ book['id'] }}">
+            {% if book['id'] in fav_books %}
+              <input type="hidden" name="action" value="remove">
+              <button type="submit" class="btn btn-warning btn-sm">Убрать</button>
+            {% else %}
+              <input type="hidden" name="action" value="add">
+              <button type="submit" class="btn btn-success btn-sm">Добавить</button>
+            {% endif %}
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

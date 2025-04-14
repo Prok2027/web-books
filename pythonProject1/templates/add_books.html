@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Добавить книгу</h2>
+<form method="post" enctype="multipart/form-data" action="{{ url_for('add_book') }}">
+  <div class="mb-3">
+    <label class="form-label">Название</label>
+    <input type="text" name="title" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Автор</label>
+    <input type="text" name="author" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Жанр</label>
+    <select name="genre_id" class="form-select">
+      {% for genre in genres %}
+        <option value="{{ genre.id }}">{{ genre.genre_name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Обложка (файл)</label>
+    <input type="file" name="cover" class="form-control" accept="image/*">
+  </div>
+  <button type="submit" class="btn btn-success">Добавить</button>
+</form>
+{% endblock %}

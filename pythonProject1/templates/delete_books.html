@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}Добавить книгу{% endblock %}
+
+{% block content %}
+<h2>Удалить книгу</h2>
+<form method="POST" action="{{ url_for('delete_book') }}">
+    <div class="mb-3">
+        <label for="title" class="form-label">Название</label>
+        <input type="text" class="form-control" id="title" name="title" required>
+    </div>
+    <div class="mb-3">
+        <label for="author" class="form-label">Автор</label>
+        <input type="text" class="form-control" id="author" name="author" required>
+    </div>
+    <button type="submit" class="btn btn-success">Удалить</button>
+</form>
+{% endblock %}

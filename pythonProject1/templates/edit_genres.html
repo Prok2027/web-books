@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="mb-4">Редактировать жанры книг</h2>
+<div class="table-responsive">
+  <table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>Название книги</th>
+        <th>Автор</th>
+        <th>Жанры</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for book in books %}
+      <tr>
+        <td>{{ book['title'] }}</td>
+        <td>{{ book['author'] }}</td>
+        <td>
+          {% for genre in genres %}
+          <div class="form-check form-check-inline">
+            <input class="form-check-input genre-checkbox"
+                   type="checkbox"
+                   data-book-id="{{ book['id'] }}"
+                   data-genre-id="{{ genre['id'] }}"
+                   id="book{{ book['id'] }}-genre{{ genre['id'] }}"
+                   {% if genre['id'] in book_genres[book['id']] %}checked{% endif %}>
+            <label class="form-check-label" for="book{{ book['id'] }}-genre{{ genre['id'] }}">
+              {{ genre['genre_name'] }}
+            </label>
+          </div>
+          {% endfor %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+document.querySelectorAll('.genre-checkbox').forEach(cb => {
+  cb.addEventListener('change', function () {
+    fetch('/update_genre', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': '{{ csrf_token() if csrf_token else "" }}'
+      },
+      body: JSON.stringify({
+        book_id: this.dataset.bookId,
+        genre_id: this.dataset.genreId,
+        checked: this.checked
+      })
+    }).then(res => {
+      if (!res.ok) alert('Ошибка при сохранении жанра');
+    });
+  });
+});
+</script>
+{% endblock %}
