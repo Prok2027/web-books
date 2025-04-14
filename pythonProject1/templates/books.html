@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <h2>Список книг</h2>
 <form method="get" action="{{ url_for('show_books') }}" class="mb-4">
@@ -40,6 +41,7 @@
     </div>
   </div>
 </form>
+
 <table class="table table-hover">
   <thead>
     <tr>
@@ -96,13 +98,13 @@
         </td>
         <td>
           <form method="post" action="{{ url_for('favorite_book') }}">
-            <input type="hidden" name="book_id" value="{{ book['id'] }}">
-            {% if book['id'] in fav_books %}
-              <input type="hidden" name="action" value="remove">
-              <button type="submit" class="btn btn-warning btn-sm">Убрать</button>
-            {% else %}
-              <input type="hidden" name="action" value="add">
-              <button type="submit" class="btn btn-success btn-sm">Добавить</button>
+          <input type="hidden" name="book_id" value="{{ book['id'] }}">
+          {% if book['id'] in fav_books %}
+            <input type="hidden" name="action" value="remove">
+            <button type="submit" class="btn btn-warning btn-sm">Убрать</button>
+          {% else %}
+            <input type="hidden" name="action" value="add">
+            <button type="submit" class="btn btn-success btn-sm">Добавить</button>
             {% endif %}
           </form>
         </td>

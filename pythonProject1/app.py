@@ -55,8 +55,8 @@ def norm(title):
 
 @app.route('/books')
 def show_books():
-    user = session.get('is_admin', '') or session.get('user', '')
-    if not user or user == 'False':
+    user = session.get('user', '')
+    if not user:
         flash('Вы должны войти в систему, чтобы просматривать библиотеку.', 'danger')
         return redirect(url_for('login'))
     sel_gen = request.args.get('genre', None)
@@ -133,6 +133,7 @@ def show_books():
                            selected_rating=sel_rat,
                            search_query=find,
                            fav_books=fav_books)
+
 
 
 @app.route('/statistics')
@@ -320,7 +321,6 @@ def favorite_book():
     if not user:
         flash('Вы должны войти в систему, чтобы добавлять избранное.', 'danger')
         return redirect(url_for('login'))
-
     book_id = request.form.get('book_id')
     act = request.form.get('action')
     conn = get_db()
@@ -339,6 +339,7 @@ def favorite_book():
     conn.commit()
     conn.close()
     return redirect(request.referrer or url_for('show_books'))
+
 
 
 @app.route('/favorites')

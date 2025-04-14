@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+
 {% block content %}
 <h2>Избранные книги</h2>
 {% if books %}
@@ -9,6 +10,7 @@
         <th>Название</th>
         <th>Автор</th>
         <th>Средняя оценка</th>
+        <th>Действие</th>
       </tr>
     </thead>
     <tbody>
@@ -16,7 +18,7 @@
         <tr>
           <td>
             {% if book['cover'] %}
-              <img src="{{ url_for('static', filename=book['cover'].split('static/')[-1]) }}" alt="Обложка" style="height: 100px;">
+              <img src="{{ url_for('uploaded_file', filename=book['cover']) }}" alt="Обложка" style="height: 100px;">
             {% else %}
               —
             {% endif %}
@@ -29,6 +31,13 @@
             {% else %}
               -
             {% endif %}
+          </td>
+          <td>
+            <form method="post" action="{{ url_for('favorite_book') }}">
+              <input type="hidden" name="book_id" value="{{ book['id'] }}">
+              <input type="hidden" name="action" value="remove">
+              <button type="submit" class="btn btn-warning btn-sm">Убрать</button>
+            </form>
           </td>
         </tr>
       {% endfor %}
